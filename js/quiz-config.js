@@ -7,7 +7,7 @@
    Движок сначала ищет img/<name>.webp, если нет — img/<name>.svg (заглушка).
    ===================================================================== */
 window.QUIZ_CONFIG = {
-  version: "2026-08-20",
+  version: "2026-08-21",
 
   // Куда уходят ответы: URL веб-приложения Google Apps Script (кончается на /exec).
   backendUrl: "https://script.google.com/macros/s/PASTE_DEPLOYMENT_ID/exec",
