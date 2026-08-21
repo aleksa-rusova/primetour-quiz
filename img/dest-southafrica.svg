@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="hsl(112, 55%, 48%)"/>
+      <stop offset="1" stop-color="hsl(152, 60%, 32%)"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="600" fill="url(#g)"/>
+  <circle cx="640" cy="140" r="160" fill="#ffffff" opacity="0.10"/>
+  <circle cx="120" cy="520" r="220" fill="#ffffff" opacity="0.08"/>
+  <text x="40" y="520" font-family="-apple-system, Segoe UI, Roboto, Arial, sans-serif" font-size="56" font-weight="700" fill="#ffffff">ЮАР</text>
+  <text x="40" y="564" font-family="-apple-system, Segoe UI, Roboto, Arial, sans-serif" font-size="22" fill="#ffffff" opacity="0.75">dest-southafrica · заглушка, заменить на .webp</text>
+</svg>
