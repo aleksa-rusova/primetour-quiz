@@ -15,6 +15,9 @@
   var TG = (window.Telegram && window.Telegram.WebApp) || null;
   var IS_DEV = !!(TG && TG.__dev);
   var DEV_POST = /[?&]post=1/.test(location.search); // в dev по умолчанию не отправляем
+  // Демо: настоящий Telegram и настоящий requestContact, но заявка никуда не уходит.
+  // Нужен, пока бэкенд не задеплоен: ?demo=1 в адресе Mini App.
+  var IS_DEMO = /[?&]demo=1/.test(location.search);
   var STORE_KEY = "primetour_quiz_v" + CFG.version;
 
   var app = document.getElementById("app");
@@ -881,11 +884,15 @@
 
     var payload = buildPayload();
 
-    if (IS_DEV && !DEV_POST) {
+    if ((IS_DEV && !DEV_POST) || IS_DEMO) {
       console.log("[quiz] Пакет для бэкенда:", payload);
       console.log("[quiz] JSON:", JSON.stringify(payload, null, 2));
-      alert("dev-режим: пакет напечатан в консоль, на сервер не отправлен.\nДобавьте &post=1 в адрес, чтобы отправить.");
+      var note = "Демо-режим: заявка не отправлена, пакет напечатан в консоль.";
+      if (IS_DEV && !IS_DEMO) note = "dev-режим: пакет напечатан в консоль, на сервер не отправлен.\nДобавьте &post=1 в адрес, чтобы отправить.";
+      if (IS_DEMO && TG && TG.showAlert) { try { TG.showAlert(note); } catch (e) { alert(note); } }
+      else alert(note);
       state.duplicate = false;
+      haptic("success");
       state.idx = CFG.steps.length + 1;
       render();
       return;
