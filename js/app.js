@@ -887,7 +887,12 @@
     if ((IS_DEV && !DEV_POST) || IS_DEMO) {
       console.log("[quiz] Пакет для бэкенда:", payload);
       console.log("[quiz] JSON:", JSON.stringify(payload, null, 2));
-      var note = "Демо-режим: заявка не отправлена, пакет напечатан в консоль.";
+      // В демо главное — проверить телефон: пришёл ли он из Telegram и есть ли подпись,
+      // которую потом проверит сервер. Консоли на телефоне нет, поэтому показываем в окне.
+      var src = payload.phoneSource === "telegram" ? "из Telegram" : (payload.phoneSource === "manual" ? "введён вручную" : "неизвестно");
+      var sig = payload.contactResponse ? ("есть, " + payload.contactResponse.length + " симв.") : "НЕТ";
+      var note = "Демо-режим: заявка не отправлена.\n\nТелефон: " + (payload.contact.phone || "пусто") +
+        "\nИсточник: " + src + "\nПодпись Telegram: " + sig;
       if (IS_DEV && !IS_DEMO) note = "dev-режим: пакет напечатан в консоль, на сервер не отправлен.\nДобавьте &post=1 в адрес, чтобы отправить.";
       if (IS_DEMO && TG && TG.showAlert) { try { TG.showAlert(note); } catch (e) { alert(note); } }
       else alert(note);
