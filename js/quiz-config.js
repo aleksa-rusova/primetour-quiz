@@ -7,7 +7,7 @@
    Движок сначала ищет img/<name>.webp, если нет — img/<name>.svg (заглушка).
    ===================================================================== */
 window.QUIZ_CONFIG = {
-  version: "2026-08-21",
+  version: "2026-08-25",
 
   // Куда уходят ответы: URL веб-приложения Google Apps Script (кончается на /exec).
   backendUrl: "https://script.google.com/macros/s/AKfycbzjILOl0xIL4UuB_0lKLAeTKPnsvcIwKHRI3DPc54IywS50KsMqTVhcaSGLqul00I0o/exec",
@@ -17,7 +17,6 @@ window.QUIZ_CONFIG = {
     phone: "+7 906 823-04-74",
     phoneHref: "tel:+79068230474",
     channelUrl: "https://t.me/primetour",
-    workHours: "с 9:00 до 19:00 по Кемерово",
   },
 
   consent: {
@@ -202,8 +201,8 @@ window.QUIZ_CONFIG = {
   done: {
     image: "done",
     title: "Спасибо, {name}!",
-    text: "Заявка уже у менеджеров. Напишем в Telegram в рабочее время — {workHours}. Если срочно — звоните: {phone}.",
-    duplicateText: "Вашу заявку мы уже получили раньше и обновили. Менеджер свяжется в рабочее время — {workHours}.",
+    text: "Заявка уже у менеджеров. Напишем в Telegram в ближайшее рабочее время. Если срочно — звоните: {phone}.",
+    duplicateText: "Вашу заявку мы уже получили раньше. Менеджер свяжется в ближайшее рабочее время.",
     closeButton: "Закрыть",
     channelButton: "В канал «Прайм тур»",
   },

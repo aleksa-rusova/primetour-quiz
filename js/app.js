@@ -68,15 +68,19 @@
     } catch (e) { /* не критично */ }
   }
 
-  /* Картинка: сначала .webp, если её нет — .svg-заглушка. */
+  /* Картинка: сначала .webp, если её нет — .svg-заглушка.
+     Имена файлов постоянные, поэтому у тех, кто уже открывал квиз, картинки
+     берутся из кэша. Версия в адресе — способ отдать новые: поднял
+     CFG.version в quiz-config.js, и все картинки перечитались. */
   function imageNode(name, alt) {
     var img = el("img");
+    var v = "?v=" + encodeURIComponent(CFG.version);
     img.loading = "lazy";
     img.alt = alt || "";
-    img.src = "img/" + name + ".webp";
+    img.src = "img/" + name + ".webp" + v;
     img.onerror = function () {
       img.onerror = null;
-      img.src = "img/" + name + ".svg";
+      img.src = "img/" + name + ".svg" + v;
     };
     return img;
   }
@@ -728,9 +732,7 @@
     root.appendChild(hero);
     root.appendChild(el("h1", null, esc(tpl(D.title, { name: state.contact.name }))));
     var text = state.duplicate ? D.duplicateText : D.text;
-    root.appendChild(el("p", "lead", esc(tpl(text, {
-      workHours: CFG.brand.workHours, phone: CFG.brand.phone,
-    }))));
+    root.appendChild(el("p", "lead", esc(tpl(text, { phone: CFG.brand.phone }))));
 
     var extra = null;
     if (state.mode === "web" || !TG) {
