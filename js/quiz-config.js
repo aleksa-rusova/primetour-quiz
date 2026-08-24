@@ -10,7 +10,7 @@ window.QUIZ_CONFIG = {
   version: "2026-08-21",
 
   // Куда уходят ответы: URL веб-приложения Google Apps Script (кончается на /exec).
-  backendUrl: "https://script.google.com/macros/s/PASTE_DEPLOYMENT_ID/exec",
+  backendUrl: "https://script.google.com/macros/s/AKfycbzjILOl0xIL4UuB_0lKLAeTKPnsvcIwKHRI3DPc54IywS50KsMqTVhcaSGLqul00I0o/exec",
 
   brand: {
     name: "Прайм тур",
