@@ -19,6 +19,9 @@
   // Нужен, пока бэкенд не задеплоен: ?demo=1 в адресе Mini App.
   var IS_DEMO = /[?&]demo=1/.test(location.search);
   var STORE_KEY = "primetour_quiz_v" + CFG.version;
+  // Сколько ждём ответ бэкенда, прежде чем показать «Спасибо» самим.
+  // Подробности — в комментарии у fetch в submit().
+  var ANSWER_WAIT_MS = 4000;
 
   var app = document.getElementById("app");
   // Нижнюю кнопку рендер-функции складывают сюда, а render() добавляет её
@@ -907,6 +910,43 @@
     state.serverError = "";
     render();
 
+    // Ответ засчитываем один раз: либо сервер успел ответить, либо истёк
+    // ANSWER_WAIT_MS и мы показываем «Спасибо» сами.
+    var settled = false;
+
+    function succeed(duplicate) {
+      if (settled) return;
+      settled = true;
+      state.sending = false;
+      state.duplicate = !!duplicate;
+      try { sessionStorage.removeItem(STORE_KEY); } catch (e) {}
+      haptic("success");
+      state.idx = CFG.steps.length + 1;
+      render();
+    }
+
+    function fail(message) {
+      if (settled) return;
+      settled = true;
+      state.sending = false;
+      haptic("error");
+      state.serverError = message;
+      render();
+    }
+
+    /* Apps Script отдаёт результат не сразу, а редиректом на одноразовый адрес.
+       На быстрых ответах (дубль, отказ по подписи) это работает, но полная
+       заявка обрабатывается ~6 секунд — обращение в CRM, карточка менеджеру,
+       сообщение клиенту — и к этому моменту адрес отдаёт 404. Проверено:
+       заявка при этом уже в CRM, а клиент видел «что-то пошло не так» и
+       отправлял второй раз.
+
+       Поэтому ждём ответ ограниченное время. Не дождались — считаем заявку
+       принятой: сервер доведёт её до CRM сам, а если не сможет, у него есть
+       своя страховка — карточка менеджерам и алерт владельцу. Реальные отказы
+       (нет согласия, плохая подпись) приходят быстро и попадут в fail(). */
+    var waiting = setTimeout(function () { succeed(false); }, ANSWER_WAIT_MS);
+
     // Content-Type: text/plain — чтобы браузер не слал preflight (GAS его не умеет)
     fetch(CFG.backendUrl, {
       method: "POST",
@@ -916,26 +956,20 @@
     })
       .then(function (r) { return r.text(); })
       .then(function (t) {
+        if (settled) return;
+        clearTimeout(waiting);
         var data;
-        try { data = JSON.parse(t); } catch (e) { data = { ok: false, error: "bad_response" }; }
-        state.sending = false;
-        if (data.ok) {
-          state.duplicate = !!data.duplicate;
-          try { sessionStorage.removeItem(STORE_KEY); } catch (e) {}
-          haptic("success");
-          state.idx = CFG.steps.length + 1;
-          render();
-        } else {
-          haptic("error");
-          state.serverError = CFG.contact.errors.server;
-          render();
-        }
+        try { data = JSON.parse(t); } catch (e) { data = null; }
+        // Ответ не разобрался — это тот самый сорвавшийся редирект,
+        // а не отказ сервера. Заявка уже принята.
+        if (!data) return succeed(false);
+        if (data.ok) return succeed(data.duplicate);
+        fail(CFG.contact.errors.server);
       })
       .catch(function () {
-        state.sending = false;
-        haptic("error");
-        state.serverError = CFG.contact.errors.network;
-        render();
+        if (settled) return;
+        clearTimeout(waiting);
+        fail(CFG.contact.errors.network);
       });
   }
 
