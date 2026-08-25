@@ -28,7 +28,7 @@
      значит придёт свежая страница. Флаг в sessionStorage не даёт зациклиться,
      если version.json почему-то врёт. */
   (function () {
-    var BUILT = "20260825d";
+    var BUILT = "20260825e";
     var GUARD = "primetour_reloaded_for";
     try {
       fetch("version.json?t=" + Date.now(), { cache: "no-store" })
@@ -50,7 +50,7 @@
   <noscript>Для квиза нужен JavaScript. Напишите нам напрямую: <a href="https://t.me/primetour">t.me/primetour</a></noscript>
   <!-- ?v= — чтобы Telegram не подсовывал старую версию из кэша: меняем при каждой правке.
        Тот же номер продублирован в version.json и в BUILT выше — все три меняются вместе. -->
-  <script src="js/quiz-config.js?v=20260825d"></script>
-  <script src="js/app.js?v=20260825d"></script>
+  <script src="js/quiz-config.js?v=20260825e"></script>
+  <script src="js/app.js?v=20260825e"></script>
 </body>
 </html>
