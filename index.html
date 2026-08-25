@@ -14,12 +14,43 @@
       document.write('<script src="js/dev-shim.js"><\/script>');
     }
   </script>
+  <script>
+  /* Страховка от кэша Telegram.
+
+     Реальный случай 25.08.2026: клиентка прошла квиз, заявка дошла до менеджера,
+     а на экране у неё была ошибка. Причина — Telegram отдал сохранённый index.html
+     недельной давности, и тот подтянул старый app.js без свежих исправлений.
+     Версия в адресах скриптов от этого не спасает: она вшита в сам index.html,
+     который и оказался старым.
+
+     Поэтому спрашиваем актуальную версию отдельным файлом мимо кэша. Не совпала
+     с вшитой — перезагружаемся с ней в адресе: другой адрес = другой ключ кэша,
+     значит придёт свежая страница. Флаг в sessionStorage не даёт зациклиться,
+     если version.json почему-то врёт. */
+  (function () {
+    var BUILT = "20260825d";
+    var GUARD = "primetour_reloaded_for";
+    try {
+      fetch("version.json?t=" + Date.now(), { cache: "no-store" })
+        .then(function (r) { return r.json(); })
+        .then(function (data) {
+          var fresh = data && data.v;
+          if (!fresh || fresh === BUILT) return;
+          if (sessionStorage.getItem(GUARD) === fresh) return;   // уже пробовали
+          sessionStorage.setItem(GUARD, fresh);
+          location.replace(location.pathname + "?v=" + encodeURIComponent(fresh));
+        })
+        .catch(function () { /* нет сети — работаем тем, что есть */ });
+    } catch (e) { /* совсем старый клиент — тоже не мешаем */ }
+  }());
+  </script>
 </head>
 <body>
   <div id="app" class="app" aria-live="polite"></div>
   <noscript>Для квиза нужен JavaScript. Напишите нам напрямую: <a href="https://t.me/primetour">t.me/primetour</a></noscript>
-  <!-- ?v= — чтобы Telegram не подсовывал старую версию из кэша: меняем при каждой правке -->
-  <script src="js/quiz-config.js?v=20260825c"></script>
-  <script src="js/app.js?v=20260825c"></script>
+  <!-- ?v= — чтобы Telegram не подсовывал старую версию из кэша: меняем при каждой правке.
+       Тот же номер продублирован в version.json и в BUILT выше — все три меняются вместе. -->
+  <script src="js/quiz-config.js?v=20260825d"></script>
+  <script src="js/app.js?v=20260825d"></script>
 </body>
 </html>
