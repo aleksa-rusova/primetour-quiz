@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
   <meta name="robots" content="noindex">
   <title>Подобрать отдых — Прайм тур</title>
-  <link rel="stylesheet" href="css/style.css?v=20260826b">
+  <link rel="stylesheet" href="css/style.css?v=20260826c">
   <!-- SDK Telegram Mini Apps. В обычном браузере тоже подгружается: даёт пустой initData — значит режим «сайт». -->
   <script src="https://telegram.org/js/telegram-web-app.js?58"></script>
   <!-- Локальная отладка: index.html?dev=1 подменяет Telegram.WebApp заглушкой (см. js/dev-shim.js) -->
@@ -28,7 +28,7 @@
      значит придёт свежая страница. Флаг в sessionStorage не даёт зациклиться,
      если version.json почему-то врёт. */
   (function () {
-    var BUILT = "20260826b";
+    var BUILT = "20260826c";
     var GUARD = "primetour_reloaded_for";
     try {
       fetch("version.json?t=" + Date.now(), { cache: "no-store" })
@@ -50,7 +50,7 @@
   <noscript>Для квиза нужен JavaScript. Напишите нам напрямую: <a href="https://t.me/primetour">t.me/primetour</a></noscript>
   <!-- ?v= — чтобы Telegram не подсовывал старую версию из кэша: меняем при каждой правке.
        Тот же номер продублирован в version.json и в BUILT выше — все три меняются вместе. -->
-  <script src="js/quiz-config.js?v=20260826b"></script>
-  <script src="js/app.js?v=20260826b"></script>
+  <script src="js/quiz-config.js?v=20260826c"></script>
+  <script src="js/app.js?v=20260826c"></script>
 </body>
 </html>
