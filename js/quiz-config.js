@@ -7,7 +7,7 @@
    Движок сначала ищет img/<name>.webp, если нет — img/<name>.svg (заглушка).
    ===================================================================== */
 window.QUIZ_CONFIG = {
-  version: "2026-08-25",
+  version: "2026-08-26",
 
   // Куда уходят ответы: URL веб-приложения Google Apps Script (кончается на /exec).
   backendUrl: "https://script.google.com/macros/s/AKfycbzjILOl0xIL4UuB_0lKLAeTKPnsvcIwKHRI3DPc54IywS50KsMqTVhcaSGLqul00I0o/exec",
@@ -21,7 +21,9 @@ window.QUIZ_CONFIG = {
 
   consent: {
     version: "v1-2026-08-20", // менять при изменении текста согласия
-    policyUrl: "https://primetour.pro/privacy", // TODO: ссылка на политику ПДн на сайте
+    /* Адрес именно /pod — так политика лежит в Joomla. Проверено 26.08.2026:
+       /privacy отдаёт главную страницу, то есть галочка согласия вела в никуда. */
+    policyUrl: "https://primetour.pro/pod",
     pdText: "Согласен(а) на обработку персональных данных",
     policyLinkText: "политика",
     marketingText: "Хочу получать подборки и акции «Прайм тур»",
