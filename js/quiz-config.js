@@ -16,7 +16,7 @@ window.QUIZ_CONFIG = {
     name: "Прайм тур",
     phone: "+7 906 823-04-74",
     phoneHref: "tel:+79068230474",
-    channelUrl: "https://t.me/primetour",
+    channelUrl: "https://t.me/primetourpro",
   },
 
   consent: {
