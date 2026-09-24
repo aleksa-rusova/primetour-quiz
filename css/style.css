@@ -69,6 +69,8 @@ h1 { font-size: 24px; line-height: 1.2; margin: 8px 0 6px; letter-spacing: -0.01
 .hero img { width: 100%; height: 100%; object-fit: cover; }
 .brand { display: flex; align-items: center; gap: 10px; color: var(--hint); font-size: 13px; margin-bottom: 6px; }
 .brand .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--accent); }
+.brand__site { margin-left: auto; color: var(--accent); text-decoration: none; font-size: 13px; }
+.brand__site:hover { text-decoration: underline; }
 .center { text-align: center; }
 .lead { font-size: 16px; color: var(--text); margin: 0 0 16px; }
 .lead a { color: var(--accent-dark); text-decoration: none; font-weight: 600; }

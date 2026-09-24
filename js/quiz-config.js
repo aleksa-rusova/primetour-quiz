@@ -17,6 +17,9 @@ window.QUIZ_CONFIG = {
     phone: "+7 906 823-04-74",
     phoneHref: "tel:+79068230474",
     channelUrl: "https://t.me/primetourpro",
+    // Ссылка «← primetour.pro» на первом экране — только в браузере (копия квиза на сайте, /podbor/).
+    // В Telegram (Mini App в боте) не показывается.
+    siteUrl: "https://primetour.pro/",
   },
 
   consent: {

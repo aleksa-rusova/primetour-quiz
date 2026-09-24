@@ -232,6 +232,11 @@
     var brand = el("div", "brand");
     brand.appendChild(el("span", "dot"));
     brand.appendChild(el("span", null, esc(CFG.brand.name)));
+    if (state.mode === "web" && CFG.brand.siteUrl) {
+      var back = el("a", "brand__site", "← " + esc(CFG.brand.siteUrl.replace(/^https?:\/\//, "").replace(/\/$/, "")));
+      back.href = CFG.brand.siteUrl;
+      brand.appendChild(back);
+    }
     root.appendChild(brand);
 
     var hero = el("div", "hero");
