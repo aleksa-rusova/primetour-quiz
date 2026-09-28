@@ -245,6 +245,7 @@
 
     root.appendChild(el("h1", null, esc(CFG.intro.title)));
     root.appendChild(el("p", "subtitle", esc(CFG.intro.subtitle)));
+    renderAlreadyTraveling(root);
 
     setFooter(footer(esc(CFG.intro.button), function () {
       haptic("select");
@@ -253,6 +254,28 @@
       save();
       render();
     }));
+  }
+
+  /* «Уже едете с нами? Сколько доплатить · Оставить отзыв» — только в Telegram.
+     openTelegramLink открывает чат с ботом и закрывает анкету, бот по ?start=
+     сразу запускает нужный сценарий. На сайте этих разделов нет. */
+  function renderAlreadyTraveling(root) {
+    var cfg = CFG.intro.alreadyTraveling;
+    if (state.mode !== "tg" || !TG || !TG.openTelegramLink || !cfg || !CFG.intro.botUrl) return;
+    var box = el("p", "already");
+    box.appendChild(el("span", "already__label", esc(cfg.label)));
+    cfg.links.forEach(function (link, i) {
+      if (i) box.appendChild(el("span", "already__sep", " · "));
+      var a = el("a", "already__link", esc(link.text));
+      a.href = CFG.intro.botUrl + "?start=" + encodeURIComponent(link.start);
+      a.onclick = function (e) {
+        if (e && e.preventDefault) e.preventDefault();
+        haptic("select");
+        TG.openTelegramLink(a.href);
+      };
+      box.appendChild(a);
+    });
+    root.appendChild(box);
   }
 
   /* ---------- Экран: шаг ---------- */

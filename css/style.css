@@ -71,6 +71,11 @@ h1 { font-size: 24px; line-height: 1.2; margin: 8px 0 6px; letter-spacing: -0.01
 .brand .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--accent); }
 .brand__site { margin-left: auto; color: var(--accent); text-decoration: none; font-size: 13px; }
 .brand__site:hover { text-decoration: underline; }
+.already { margin: -6px 0 18px; color: var(--hint); font-size: 14px; }
+.already__label { display: block; margin-bottom: 2px; }
+.already__link { color: var(--accent); text-decoration: none; font-weight: 500; white-space: nowrap; display: inline-block; padding: 4px 0; }
+.already__link:hover { text-decoration: underline; }
+.already__sep { color: var(--hint); }
 .center { text-align: center; }
 .lead { font-size: 16px; color: var(--text); margin: 0 0 16px; }
 .lead a { color: var(--accent-dark); text-decoration: none; font-weight: 600; }
