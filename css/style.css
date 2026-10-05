@@ -185,3 +185,15 @@ textarea.input { min-height: 84px; resize: vertical; }
   .app { padding-top: 12px; }
   .cards { grid-template-columns: repeat(3, 1fr); }
 }
+
+/* ---------- Окно на сайте (?embed=1, 05.10.2026) ----------
+   Крестик «Закрыть» рисует страница сайта в правом верхнем углу — освобождаем под него место. */
+.is-embed .top { padding-right: 60px; }
+.is-embed .brand { padding-right: 44px; min-height: 28px; }
+/* Сайт светлый — в окне квиз тоже всегда светлый, даже при тёмной теме устройства */
+@media (prefers-color-scheme: dark) {
+  :root.is-embed {
+    --bg: #ffffff; --bg-2: #f2f5f7; --card: #ffffff; --text: #1b2430; --hint: #7a8794;
+    --line: rgba(127, 140, 155, 0.22); --shadow: 0 6px 24px rgba(20, 40, 60, 0.08);
+  }
+}

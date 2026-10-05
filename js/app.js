@@ -22,6 +22,15 @@
   // Сколько ждём ответ бэкенда, прежде чем показать «Спасибо» самим.
   // Подробности — в комментарии у fetch в submit().
   var ANSWER_WAIT_MS = 4000;
+  // Окно на сайте: primetour.js открывает /podbor/?embed=1 во фрейме поверх страницы (05.10.2026).
+  // Ссылку «← primetour.pro» прячем, «Закрыть» на финале закрывает окно, о старте и заявке сообщаем странице.
+  var IS_EMBED = window.parent !== window && /[?&]embed=1/.test(location.search);
+  if (IS_EMBED) document.documentElement.classList.add("is-embed");
+
+  function toParent(type) {
+    if (!IS_EMBED) return;
+    try { window.parent.postMessage({ source: "primetour-quiz", type: type }, location.origin); } catch (e) { /* не критично */ }
+  }
 
   var app = document.getElementById("app");
   // Нижнюю кнопку рендер-функции складывают сюда, а render() добавляет её
@@ -187,6 +196,13 @@
       bar.appendChild(fill);
       top.appendChild(bar);
       var row = el("div", "top-row");
+      // В браузере нет кнопки «Назад» Telegram — ставим свою
+      if (!(TG && TG.initData)) {
+        var backBtn = el("button", "back-link", "← Назад");
+        backBtn.type = "button";
+        backBtn.onclick = back;
+        row.appendChild(backBtn);
+      }
       row.appendChild(el("span", "step", tpl(CFG.ui.stepOf, { n: pos, total: total })));
       top.appendChild(row);
       frag.appendChild(top);
@@ -232,7 +248,7 @@
     var brand = el("div", "brand");
     brand.appendChild(el("span", "dot"));
     brand.appendChild(el("span", null, esc(CFG.brand.name)));
-    if (state.mode === "web" && CFG.brand.siteUrl) {
+    if (state.mode === "web" && CFG.brand.siteUrl && !IS_EMBED) {
       var back = el("a", "brand__site", "← " + esc(CFG.brand.siteUrl.replace(/^https?:\/\//, "").replace(/\/$/, "")));
       back.href = CFG.brand.siteUrl;
       brand.appendChild(back);
@@ -249,6 +265,7 @@
 
     setFooter(footer(esc(CFG.intro.button), function () {
       haptic("select");
+      toParent("start");
       state.idx = isVisible(CFG.steps[0]) ? 0 : moveIdx(1);
       if (state.idx < 0) state.idx = 0;
       save();
@@ -776,7 +793,8 @@
     }
 
     setFooter(footer(esc(D.closeButton), function () {
-      if (TG && TG.close) TG.close();
+      if (IS_EMBED) toParent("close");
+      else if (TG && TG.close) TG.close();
       else window.location.href = CFG.brand.channelUrl;
     }, { extra: extra }));
   }
@@ -951,6 +969,7 @@
       state.duplicate = !!duplicate;
       try { sessionStorage.removeItem(STORE_KEY); } catch (e) {}
       haptic("success");
+      toParent("sent");
       state.idx = CFG.steps.length + 1;
       render();
     }
