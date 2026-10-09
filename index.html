@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
   <meta name="robots" content="noindex">
   <title>Подобрать отдых — Прайм тур</title>
-  <link rel="stylesheet" href="css/style.css?v=20261005a">
+  <link rel="stylesheet" href="css/style.css?v=20261009a">
   <!-- SDK Telegram Mini Apps. В обычном браузере тоже подгружается: даёт пустой initData — значит режим «сайт». -->
   <script src="https://telegram.org/js/telegram-web-app.js?58"></script>
   <!-- Локальная отладка: index.html?dev=1 подменяет Telegram.WebApp заглушкой (см. js/dev-shim.js) -->
@@ -30,7 +30,7 @@
   (function () {
     // окно на сайте: класс ставим до отрисовки, чтобы не мигала тёмная тема (подробнее — IS_EMBED в app.js)
     if (window.parent !== window && /[?&]embed=1/.test(location.search)) document.documentElement.classList.add("is-embed");
-    var BUILT = "20261005a";
+    var BUILT = "20261009a";
     var GUARD = "primetour_reloaded_for";
     try {
       fetch("version.json?t=" + Date.now(), { cache: "no-store" })
@@ -55,7 +55,45 @@
   <noscript>Для квиза нужен JavaScript. Напишите нам напрямую: <a href="https://t.me/primetourpro">t.me/primetourpro</a></noscript>
   <!-- ?v= — чтобы Telegram не подсовывал старую версию из кэша: меняем при каждой правке.
        Тот же номер продублирован в version.json и в BUILT выше — все три меняются вместе. -->
-  <script src="js/quiz-config.js?v=20261005a"></script>
-  <script src="js/app.js?v=20261005a"></script>
+  <script src="js/quiz-config.js?v=20261009a"></script>
+  <script>
+  /* Яндекс Метрика (09.10.2026). Счётчик и имена целей — в quiz-config.js (metrika),
+     цели отправляет app.js через window.ym.
+
+     1. Telegram кладёт в адрес после # подписанные данные пользователя (tgWebAppData:
+        id, имя, username). SDK их уже прочитал, а в Метрику они попасть не должны —
+        убираем хвост из адреса до загрузки счётчика. Перезагрузка из страховки
+        версии и так открывает страницу без него, SDK берёт данные из sessionStorage.
+     2. Локально (localhost, ?dev=1, ?demo=1) счётчик не грузим, чтобы не портить
+        статистику: ym только пишет вызовы в консоль.
+     3. В окне на сайте (?embed=1) просмотр страницы уже засчитала сама страница сайта,
+        поэтому здесь defer: без второго просмотра, только цели и параметры. */
+  (function () {
+    var cfg = window.QUIZ_CONFIG && window.QUIZ_CONFIG.metrika;
+    if (!cfg || !cfg.counterId) return;
+    var local = /^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname) || location.protocol === "file:" ||
+      /[?&](dev|demo)=1/.test(location.search);
+    try {
+      if (/tgWebApp/.test(location.hash) && window.history && history.replaceState) {
+        history.replaceState(history.state, "", location.pathname + location.search);
+      }
+    } catch (e) { /* не вышло — счётчик не грузим, данные Telegram дороже статистики */ if (/tgWebApp/.test(location.hash)) return; }
+    if (local) {
+      window.ym = function () { try { console.log.apply(console, ["[ym]"].concat([].slice.call(arguments))); } catch (e) {} };
+      return;
+    }
+    (function (m, e, t, r, i, k, a) {
+      m[i] = m[i] || function () { (m[i].a = m[i].a || []).push(arguments); };
+      m[i].l = 1 * new Date();
+      k = e.createElement(t); a = e.getElementsByTagName(t)[0]; k.async = 1; k.src = r; a.parentNode.insertBefore(k, a);
+    })(window, document, "script", "https://mc.yandex.ru/metrika/tag.js?id=" + cfg.counterId, "ym");
+    var embed = window.parent !== window && /[?&]embed=1/.test(location.search);
+    window.ym(cfg.counterId, "init", {
+      defer: embed, webvisor: false, clickmap: false, trackLinks: true, accurateTrackBounce: true,
+      referrer: document.referrer, url: location.href,
+    });
+  }());
+  </script>
+  <script src="js/app.js?v=20261009a"></script>
 </body>
 </html>

@@ -32,6 +32,43 @@
     try { window.parent.postMessage({ source: "primetour-quiz", type: type }, location.origin); } catch (e) { /* не критично */ }
   }
 
+  /* ---------- Яндекс Метрика ----------
+     Счётчик грузит index.html, имена целей — в CFG.metrika. Каждая цель уходит
+     один раз за открытие квиза: «Назад/Дальше» по шагам воронку не раздувают.
+     В Метрику идут только служебные имена шагов, канал и метка поста —
+     ни имени, ни телефона, ни ответов. */
+  var YM = CFG.metrika || null;
+  var ymReached = {};
+
+  function ymCall() {
+    if (!YM || !YM.counterId || typeof window.ym !== "function") return;
+    try { window.ym.apply(window, [YM.counterId].concat([].slice.call(arguments))); } catch (e) { /* статистика не важнее заявки */ }
+  }
+
+  function ymGoal(key, suffix) {
+    var name = YM && YM.goals && YM.goals[key];
+    if (!name) return;
+    name += suffix || "";
+    if (ymReached[name]) return;
+    ymReached[name] = true;
+    ymCall("reachGoal", name);
+  }
+
+  function ymVisitParams() {
+    if (!YM || !YM.params) return;
+    var p = {};
+    p[YM.params.channel] = state.mode === "tg" ? "Telegram" : "Сайт";
+    p[YM.params.post] = String(startParam() || "").slice(0, 64) || YM.params.noPost;
+    ymCall("params", p);
+  }
+
+  /** Цель экрана, который сейчас на виду. */
+  function ymScreen() {
+    if (state.idx === -1) ymGoal("open");
+    else if (state.idx >= 0 && state.idx < CFG.steps.length) ymGoal("step", currentStep().id);
+    else if (state.idx === CFG.steps.length) ymGoal("contact");
+  }
+
   var app = document.getElementById("app");
   // Нижнюю кнопку рендер-функции складывают сюда, а render() добавляет её
   // ПОСЛЕ очистки контейнера — иначе она стирается вместе со старым экраном.
@@ -221,6 +258,7 @@
     if (pendingFooter) app.appendChild(pendingFooter);
     window.scrollTo(0, 0);
     syncBackButton();
+    ymScreen();
   }
 
   /** Ставит нижнюю кнопку текущего экрана (добавится в конце render). */
@@ -609,7 +647,7 @@
     } else if (canShare && state.phoneSource !== "manual") {
       var share = el("button", "btn-share", esc(C.shareButton));
       share.type = "button";
-      share.onclick = askContact;
+      share.onclick = function () { ymGoal("phoneTap"); askContact(); };
       phoneField.appendChild(share);
       var manual = el("button", "link", esc(C.manualLink));
       manual.type = "button";
@@ -752,6 +790,7 @@
       state.contact.phone = phone.charAt(0) === "+" ? phone : "+" + phone;
       state.phoneSource = "telegram";
       state.contactResponse = data.response || null;
+      ymGoal("phoneOk");
       haptic("success");
       save();
       render();
@@ -949,6 +988,7 @@
       else alert(note);
       state.duplicate = false;
       haptic("success");
+      ymGoal("sent"); // в dev/demo настоящая Метрика не грузится — вызов уходит только в консоль
       state.idx = CFG.steps.length + 1;
       render();
       return;
@@ -970,6 +1010,7 @@
       try { sessionStorage.removeItem(STORE_KEY); } catch (e) {}
       haptic("success");
       toParent("sent");
+      ymGoal("sent");
       state.idx = CFG.steps.length + 1;
       render();
     }
@@ -1032,6 +1073,8 @@
       } catch (e) { /* старый клиент — работаем как есть */ }
     }
     restore();
+    ymVisitParams();
+    ymGoal("open"); // квиз открыт, даже если человек вернулся сразу на середину
     render();
   }
 

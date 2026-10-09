@@ -22,6 +22,29 @@ window.QUIZ_CONFIG = {
     siteUrl: "https://primetour.pro/",
   },
 
+  /* Яндекс Метрика — тот же счётчик, что на сайте primetour.pro (09.10.2026).
+     Скрипт Метрики подключает index.html, цели отправляет app.js.
+     Цели заводятся в Метрике типом «JavaScript-событие», идентификатор — буква в букву
+     (список целей и инструкция — prime/site/wave3/metrika-celi.md). Имена, телефон и ответы в Метрику не уходят.
+     Локально (localhost, ?dev=1, ?demo=1) настоящая Метрика не грузится: вызовы пишутся в консоль. */
+  metrika: {
+    counterId: 112276608,
+    goals: {
+      open: "qz_open",          // квиз открыт: первый экран
+      step: "qz_step_",         // + id шага: qz_step_destination, qz_step_vibe, qz_step_when, qz_step_who, qz_step_budget, qz_step_priorities, qz_step_logistics
+      contact: "qz_contact",    // экран «Куда прислать варианты?»
+      phoneTap: "qz_phone_tap", // нажали «Поделиться номером из Telegram»
+      phoneOk: "qz_phone_ok",   // Telegram отдал номер
+      sent: "qz_sent",          // заявка ушла (и в Telegram, и на сайте)
+    },
+    // Параметры визита: в Метрике «Отчёты → Содержание → Параметры визитов»
+    params: {
+      channel: "Канал",          // Telegram или Сайт
+      post: "Метка поста",       // start-параметр бота (?startapp=…) или ?campaign= на сайте
+      noPost: "(без метки)",
+    },
+  },
+
   consent: {
     version: "v1-2026-08-20", // менять при изменении текста согласия
     /* Адрес именно /pod — так политика лежит в Joomla. Проверено 26.08.2026:
